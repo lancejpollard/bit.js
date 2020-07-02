@@ -4,22 +4,32 @@ exports.getNumberOfBitsInInteger = function(int32) {
   return Math.floor(Math.log2(int32)) + 1
 }
 
-exports.getRangeOfBitsFromInteger = function(int32, start, size) {
+exports.getRangeOfBitsFromInteger = function(int32, left, size) {
   let total = exports.getNumberOfBitsInInteger(int32)
-  let end = total - start - size
+  let right = total - left - size
   let powerOf2 = 1 << total
   let all1s = powerOf2 - 1
-  let all1sOnRight = all1s >> start
-  let all1sOnLeft = all1s << end
+  let all1sOnRight = all1s >> left
+  let all1sOnLeft = all1s << right
   let all1sInMiddle = all1sOnRight & all1sOnLeft
   let matching = int32 & all1sInMiddle
-  let shifted = matching >> end
+  let shifted = matching >> right
   return shifted
 }
 
-exports.setBitsInInteger = function(int32, start, value) {
-  let selection = value << start
-  let combined = int32 | selection
+exports.setBitsOnInteger = function(int32, left, value) {
+  let total = exports.getNumberOfBitsInInteger(int32)
+  let size = exports.getNumberOfBitsInInteger(value)
+  let right = total - left - size
+  let powerOf2 = 1 << total
+  let all1s = powerOf2 - 1
+  let all1sOnRight = all1s >> left
+  let all1sOnLeft = all1s << right
+  let all1sInMiddle = all1sOnRight & all1sOnLeft
+  let all1sOnBounds = ~all1sInMiddle
+  let kept = int32 & all1sOnBounds
+  let shifted = value << right
+  let combined = kept | shifted
   return combined
 }
 
