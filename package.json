@@ -1,0 +1,27 @@
+{
+  "name": "@lancejpollard/bit",
+  "version": "0.0.1",
+  "description": "Bit Manipulation Standards",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lancejpollard/bit.js.git"
+  },
+  "keywords": [
+    "bit-manipulation",
+    "bitwise",
+    "bit-twiddling",
+    "bit",
+    "bytes",
+    "buffer"
+  ],
+  "author": "Lance Pollard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lancejpollard/bit.js/issues"
+  },
+  "homepage": "https://github.com/lancejpollard/bit.js#readme"
+}
