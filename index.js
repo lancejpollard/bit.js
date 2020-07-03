@@ -8,10 +8,18 @@ exports.getNumberOfBitsInUint32 = function(uint32) {
   return count
 }
 
+exports.getPowerOfTwo = function(power) {
+  return 1 << power
+}
+
 exports.getRangeOfBitsFromUint32 = function(uint32, left, size) {
-  let total = exports.getNumberOfBitsInUint32(uint32)
-  let right = total - left - size
-  let powerOf2 = 1 << total
+  let extent = left + size
+  if (extent > 31) {
+    throw new Error(`Too much value`)
+  }
+  let total = 31
+  let right = total - extent
+  let powerOf2 = exports.getPowerOfTwo(total)
   let all1s = powerOf2 - 1
   let all1sOnRight = all1s >> left
   let all1sOnLeft = all1s << right
@@ -22,36 +30,23 @@ exports.getRangeOfBitsFromUint32 = function(uint32, left, size) {
 }
 
 exports.setBitsOnUint32 = function(uint32, left, value) {
-  let sourceSize = exports.getNumberOfBitsInUint32(uint32)
+  let sourceSize = 31
   let valueSize = exports.getNumberOfBitsInUint32(value)
+  let extent = left + valueSize
 
-  // case 1: 101 + 101 at 3 = 101101
-  // case 2: 101 + 101 at 2 = 10101
-  // case 3: 101 + 1 at 1 = 111
-  let targetExpanse = left + valueSize
-  let targetSize = Math.max(sourceSize, targetExpanse)
-  let sourceUpdated = uint32
-
-  if (targetSize > sourceSize) {
-    let targetGrow = targetSize - sourceSize
-    // now we have the full length target
-    sourceUpdated = sourceUpdated << targetGrow
+  if (extent > sourceSize) {
+    throw new Error(`Too many bits`)
   }
 
-  // write value at a specific position relative to the target
-  let valueGrow = targetSize - left - valueSize
+  let valueGrow = sourceSize - extent
   let valueUpdated = value << valueGrow
-  let valueUpdatedSize = valueSize + valueGrow
-
-  // clear the target at the value position
   let valuePowerOf2 = 1 << valueSize
   let valueAll1s = valuePowerOf2 - 1
   let valueAll1sShifted = valueAll1s << valueGrow
   let valueAll1sShiftedInverse = ~valueAll1sShifted
-  let sourceUpdatedWithOpenSpot = valueAll1sShiftedInverse & sourceUpdated
-
-  let output = sourceUpdatedWithOpenSpot | valueUpdated
-  return output
+  let sourceUpdatedWithOpenSpot = valueAll1sShiftedInverse & uint32
+  let combined = sourceUpdatedWithOpenSpot | valueUpdated
+  return combined
 }
 
 exports.getRangeOfBitsFromUint32Buffer = function(read32Buffer, readLeft, readSize, writeUint32Buffer, writeLeft) {
@@ -73,11 +68,41 @@ exports.getRangeOfBitsFromUint32Buffer = function(read32Buffer, readLeft, readSi
 }
 
 exports.setBitsUsingUint32InUint32Buffer = function(writeUint32Buffer, left, writeUint32) {
+  let writeSize = exports.getNumberOfBitsInUint32(writeUint32)
+  let writeUpdated = writeUint32 << (31 - writeSize)
   let readUint32Left = left >> 5
-  let readUint32 = writeUint32Buffer[readUint32Left]
+  let readUint32a = writeUint32Buffer[readUint32Left]
   let readBitLeft = left
-  let outUint32 = exports.setBitsOnUint32(readUint32, readBitLeft, writeUint32)
-  writeUint32Buffer[readUint32Left] = outUint32
+  let readStartSize = 31 - readBitLeft
+  let writeUint32Subseta = exports.getRangeOfBitsFromUint32(writeUpdated, 0, readStartSize)
+  let outUint32a = exports.setBitsOnUint32(readUint32a, readBitLeft, writeUint32Subseta)
+  writeUint32Buffer[readUint32Left] = outUint32a
+  let extent = readBitLeft + writeSize
+  if (extent > 31) {
+    let writeUint32Subsetb = exports.getRangeOfBitsFromUint32(writeUpdated, readStartSize, 31 - readStartSize)
+    let writeUint32SubsetbSize = exports.getNumberOfBitsInUint32(writeUint32Subsetb)
+    let readUint32b = writeUint32Buffer[readUint32Left + 1]
+    let clearedUint32 = exports.clearBitsOnUint32(readUint32b, 0, writeUint32SubsetbSize)
+    let outUint32b = exports.setBitsOnUint32(clearedUint32, 31 - writeUint32SubsetbSize, writeUint32Subsetb)
+    writeUint32Buffer[readUint32Left + 1] = outUint32b
+  }
+}
+
+exports.clearBitsOnUint32 = function(uint32, left, size) {
+  let extent = left + size
+  if (extent > 31) {
+    throw new Error(`Too much value`)
+  }
+  let total = 31
+  let right = total - extent
+  let powerOf2 = 1 << total
+  let all1s = powerOf2 - 1
+  let all1sOnRight = all1s >> left
+  let all1sOnLeft = all1s << right
+  let all1sInMiddle = all1sOnRight & all1sOnLeft
+  let all1sOnBounds = ~all1sInMiddle
+  let cleared = uint32 & all1sOnBounds
+  return cleared
 }
 
 exports.setBitsUsingStringInUint8Buffer = function(write8Buffer, left, string) {
