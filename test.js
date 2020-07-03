@@ -35,6 +35,15 @@ assertBits(b4, '10111001')
 const b5 = int.load(0b10111001, 5, 0b101)
 assertBits(b5, '10111101')
 
+const c1 = int.hide(0b10111001, 2, 3)
+assertBits(c1, '10000001')
+
+const c2 = int.hide(0b10111001, 0, 3)
+assertBits(c2, '11001')
+
+const d1 = int.link_lead(0b10111001, 2, 3, 2)
+assertBits(d1, '10010001')
+
 // const z1 = new Uint8Array(16)
 // bit.setBitsUsingUint8InUint8Buffer(z1, 0, 5)
 // assertBuffer(z1, 0, '1010000000000000000000000000000')
