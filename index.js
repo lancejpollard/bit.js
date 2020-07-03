@@ -88,6 +88,21 @@ exports.setBitsUsingUint32InUint32Buffer = function(writeUint32Buffer, left, wri
   }
 }
 
+exports.setBitsUsingStringInUint8Buffer = function(write8Buffer, left, string) {
+
+}
+
+exports.setPaddedBitsUsingUint32InUint32Buffer = function(writeUint32Buffer, left, size, writeUint32) {
+  exports.clearBitsOnUint32Buffer(writeUint32Buffer, left, size)
+  let writeSize = exports.getNumberOfBitsInUint32(writeUint32)
+  let newLeft = left + size - writeSize
+  exports.setBitsUsingUint32InUint32Buffer(writeUint32Buffer, newLeft, writeUint32)
+}
+
+exports.clearBitsOnUint32Buffer = function(writeUint32Buffer, left, size) {
+
+}
+
 exports.clearBitsOnUint32 = function(uint32, left, size) {
   let extent = left + size
   if (extent > 31) {
@@ -103,10 +118,6 @@ exports.clearBitsOnUint32 = function(uint32, left, size) {
   let all1sOnBounds = ~all1sInMiddle
   let cleared = uint32 & all1sOnBounds
   return cleared
-}
-
-exports.setBitsUsingStringInUint8Buffer = function(write8Buffer, left, string) {
-
 }
 
 exports.getLastNBitsFromUint32 = function(int32, n) {

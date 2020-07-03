@@ -58,6 +58,12 @@ assertBuffer(z4, 2, '0')
 assertBuffer(z4, 3, '101110010000000000000011')
 assertBuffer(z4, 4, '1111111')
 
+const w1 = new Uint32Array(16)
+bit.setBitsUsingUint32InUint32Buffer(w1, 0, 5)
+assertBuffer(w1, 0, '1010000000000000000000000000000')
+bit.setPaddedBitsUsingUint32InUint32Buffer(w1, 3, 10, 5)
+assertBuffer(w1, 0, '1010000000101000000000000000000')
+
 // const z4 = new Uint32Array(16)
 // z2[0] = x2
 // z2[1] = x2
