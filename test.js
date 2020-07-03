@@ -1,6 +1,6 @@
 
 const assert = require('assert')
-const { int } = require('.')
+const { int, buf } = require('.')
 
 const a1 = int.read(0b10100000, 0, 1)
 assertBits(a1, '1')
@@ -41,76 +41,50 @@ assertBits(c1, '10000001')
 const c2 = int.hide(0b10111001, 0, 3)
 assertBits(c2, '11001')
 
-const d1 = int.link_lead(0b10111001, 2, 3, 2)
+const d1 = int.load_lead(0b10111001, 2, 3, 2)
 assertBits(d1, '10010001')
 
-// const z1 = new Uint8Array(16)
-// bit.setBitsUsingUint8InUint8Buffer(z1, 0, 5)
-// assertBuffer(z1, 0, '1010000000000000000000000000000')
-// bit.setBitsUsingUint8InUint8Buffer(z1, 30, 5)
-// assertBuffer(z1, 0, '1010000000000000000000000000001')
-// assertBuffer(z1, 1, '100000000000000000000000000000')
+const e1 = new Uint8Array(16)
+buf.load(e1, 0, 5)
+assertBuffer(e1, 0, '10100000')
+buf.load(e1, 6, 5)
+assertBuffer(e1, 0, '10100010')
+assertBuffer(e1, 1, '10000000')
 
-// const z2 = new Uint8Array(16)
-// bit.setBitsUsingUint8InUint8Buffer(z2, 0, 5)
-// assertBuffer(z2, 0, '1010000000000000000000000000000')
-// bit.setBitsUsingUint8InUint8Buffer(z2, 100, 5)
-// assertBuffer(z2, 0, '1010000000000000000000000000000')
-// assertBuffer(z2, 1, '0')
-// assertBuffer(z2, 2, '0')
-// assertBuffer(z2, 3, '0')
-// assertBuffer(z2, 4, '101000000000000000000000')
+const e2 = new Uint8Array(16)
+buf.load(e2, 0, 5)
+assertBuffer(e2, 0, '10100000')
+buf.load(e2, 20, 5)
+assertBuffer(e2, 0, '10100000')
+assertBuffer(e2, 1, '0')
+assertBuffer(e2, 2, '1010')
+assertBuffer(e2, 3, '0')
 
-// const z4 = new Uint8Array(16)
-// bit.setBitsUsingUint8InUint8Buffer(z4, 0, 5)
-// assertBuffer(z4, 0, '1010000000000000000000000000000')
-// bit.setBitsUsingUint8InUint8Buffer(z4, 100, x3)
-// assertBuffer(z4, 0, '1010000000000000000000000000000')
-// assertBuffer(z4, 1, '0')
-// assertBuffer(z4, 2, '0')
-// assertBuffer(z4, 3, '101110010000000000000011')
-// assertBuffer(z4, 4, '1111111000000000000000000000000')
+const f1 = new Uint8Array(16)
+f1[0] = 0b10111001
+f1[1] = 0b10111001
+f1[3] = 0b10111001
+const f2 = new Uint8Array(16)
+buf.read(f1, 0, 8, f2, 0)
+assertBuffer(f2, 0, '10111001')
 
-// const w1 = new Uint8Array(16)
-// bit.setBitsUsingUint8InUint8Buffer(w1, 0, 5)
-// bit.setBitsUsingUint8InUint8Buffer(w1, 31, 5)
-// bit.setBitsUsingUint8InUint8Buffer(w1, 62, 5)
-// assertBuffer(w1, 0, '1010000000000000000000000000000')
-// assertBuffer(w1, 1, '1010000000000000000000000000000')
-// assertBuffer(w1, 2, '1010000000000000000000000000000')
-// bit.setPaddedBitsUsingUint8InUint8Buffer(w1, 3, 10, 5)
-// assertBuffer(w1, 0, '1010000000101000000000000000000')
+const f3 = new Uint8Array(16)
+f3[0] = 0b10111001
+f3[1] = 0b10111001
+f3[3] = 0b10111001
+const f4 = new Uint8Array(16)
+buf.read(f3, 1, 8, f4, 0)
+assertBuffer(f4, 0, '1110011')
+assertBuffer(f4, 1, '0')
 
-// const m1 = new Uint8Array(16)
-// m1[0] = 0b10111001
-// m1[1] = 0b10111001
-// m1[3] = x2
-// const m2 = new Uint8Array(16)
-// bit.getRangeOfBitsFromUint8Buffer(m1, 0, 31, m2, 0)
-// assertBuffer(m2, 0, '1011100100000000000000000000000')
-
-// const m3 = new Uint8Array(16)
-// m3[0] = x2
-// m3[1] = x2
-// m3[3] = x2
-// const m4 = new Uint8Array(16)
-// bit.getRangeOfBitsFromUint8Buffer(m3, 1, 33, m4, 0)
-// assertBuffer(m4, 0, '111001000000000000000000000001')
-//                      // 100000000000000000000000000000
-// assertBuffer(m4, 1, '10000000000000000000000000000')
-
-// const m5 = new Uint8Array(16)
-// m5[0] = x2
-// m5[1] = x2
-// m5[3] = x2
-// const m6 = new Uint8Array(16)
-// bit.getRangeOfBitsFromUint8Buffer(m5, 5, 34, m6, 0)
-// assertBuffer(m6, 0, '10000000000000000000000010111')
-//                      00100000000000000000000000000
-//                      10000000000000000000000000000
-//                      100000000000000000000000000000
-//                      001000000000000000000000000000
-// assertBuffer(m6, 1, '100000000000000000000000000')
+const f5 = new Uint8Array(16)
+f5[0] = 0b10111001
+f5[1] = 0b10111001
+f5[3] = 0b10111001
+const f6 = new Uint8Array(16)
+buf.read(f5, 1, 16, f6, 0)
+assertBuffer(f6, 0, '1110011')
+assertBuffer(f6, 1, '1110010')
 
 console.log(`
     success

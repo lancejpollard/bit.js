@@ -48,6 +48,49 @@ assertBits(c1, '10000001')
 const c2 = int.hide(0b10111001, 0, 3)
 assertBits(c2, '11001')
 
-const d1 = int.link_lead(0b10111001, 2, 3, 2)
+const d1 = int.load_lead(0b10111001, 2, 3, 2)
 assertBits(d1, '10010001')
+
+
+const e1 = new Uint8Array(16)
+buf.load(e1, 0, 5)
+assertBuffer(e1, 0, '10100000')
+buf.load(e1, 6, 5)
+assertBuffer(e1, 0, '10100010')
+assertBuffer(e1, 1, '10000000')
+
+const e2 = new Uint8Array(16)
+buf.load(e2, 0, 5)
+assertBuffer(e2, 0, '10100000')
+buf.load(e2, 20, 5)
+assertBuffer(e2, 0, '10100000')
+assertBuffer(e2, 1, '0')
+assertBuffer(e2, 2, '1010')
+assertBuffer(e2, 3, '0')
+
+const f1 = new Uint8Array(16)
+f1[0] = 0b10111001
+f1[1] = 0b10111001
+f1[3] = 0b10111001
+const f2 = new Uint8Array(16)
+buf.read(f1, 0, 8, f2, 0)
+assertBuffer(f2, 0, '10111001')
+
+const f3 = new Uint8Array(16)
+f3[0] = 0b10111001
+f3[1] = 0b10111001
+f3[3] = 0b10111001
+const f4 = new Uint8Array(16)
+buf.read(f3, 1, 8, f4, 0)
+assertBuffer(f4, 0, '1110011')
+assertBuffer(f4, 1, '0')
+
+const f5 = new Uint8Array(16)
+f5[0] = 0b10111001
+f5[1] = 0b10111001
+f5[3] = 0b10111001
+const f6 = new Uint8Array(16)
+buf.read(f5, 1, 16, f6, 0)
+assertBuffer(f6, 0, '1110011')
+assertBuffer(f6, 1, '1110010')
 ```
