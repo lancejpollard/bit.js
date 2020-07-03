@@ -6,6 +6,7 @@ const bit = require('.')
 
 const x1 = 0b1010000000000000000000000000000
 const x2 = 0b1011100100000000000000000000000
+const x3 = 0b1011100100000000000000111111111
 
 const a1 = bit.getRangeOfBitsFromUint32(x1, 0, 3)
 assertBits(a1, '101')
@@ -38,7 +39,26 @@ bit.setBitsUsingUint32InUint32Buffer(z1, 30, 5)
 assertBuffer(z1, 0, '1010000000000000000000000000001')
 assertBuffer(z1, 1, '10000000000000000000000000000')
 
-// const z2 = new Uint32Array(16)
+const z2 = new Uint32Array(16)
+bit.setBitsUsingUint32InUint32Buffer(z2, 0, 5)
+assertBuffer(z2, 0, '1010000000000000000000000000000')
+bit.setBitsUsingUint32InUint32Buffer(z2, 100, 5)
+assertBuffer(z2, 0, '1010000000000000000000000000000')
+assertBuffer(z2, 1, '0')
+assertBuffer(z2, 2, '0')
+assertBuffer(z2, 3, '101000000000000000000000')
+
+const z4 = new Uint32Array(16)
+bit.setBitsUsingUint32InUint32Buffer(z4, 0, 5)
+assertBuffer(z4, 0, '1010000000000000000000000000000')
+bit.setBitsUsingUint32InUint32Buffer(z4, 100, x3)
+assertBuffer(z4, 0, '1010000000000000000000000000000')
+assertBuffer(z4, 1, '0')
+assertBuffer(z4, 2, '0')
+assertBuffer(z4, 3, '101110010000000000000011')
+assertBuffer(z4, 4, '1111111')
+
+// const z4 = new Uint32Array(16)
 // z2[0] = x2
 // z2[1] = x2
 // z2[3] = x2
