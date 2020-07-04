@@ -82,21 +82,38 @@ f5[0] = 0b10111001
 f5[1] = 0b10111001
 f5[3] = 0b10111001
 const f6 = new Uint8Array(16)
-buf.read(f5, 1, 16, f6, 0)
-assertBuffer(f6, 0, '1110011')
-assertBuffer(f6, 1, '1110010')
+buf.read(f5, 0, 16, f6, 0)
+assertBuffer(f6, 0, '10111001')
+assertBuffer(f6, 1, '10111001')
 
 const f7 = new Uint8Array(16)
 f7[0] = 0b10111001
 const f8 = new Uint8Array(16)
 buf.read(f7, 2, 2, f8, 0)
-assertBuffer(f8, 0, '11000000')
+assertBuffer(f8, 0, '11')
+
+const f9 = new Uint8Array(16)
+f9[0] = 0b10111001
+f9[1] = 0b10111001
+f9[3] = 0b10111001
+const f10 = new Uint8Array(16)
+buf.read(f9, 0, 2, f10, 0)
+assertBuffer(f10, 0, '10')
+
+const f11 = new Uint8Array(16)
+f11[0] = 0b10111001
+f11[1] = 0b10111001
+f11[3] = 0b10111001
+const f12 = new Uint8Array(16)
+buf.read(f11, 1, 16, f12, 0)
+assertBuffer(f12, 0, '1110011')
+assertBuffer(f12, 1, '1110010')
 
 const g1 = new Uint8Array(16)
 g1[0] = 0b10111001
 const g2 = new Uint8Array(16)
 const g3 = buf.read_head(g1, 2, 2)
-assertBits(g3, '11000000')
+assertBits(g3, '11')
 
 console.log(`
     success
